@@ -13,7 +13,6 @@ val minioVersion = "8.5.12"
 val springStateMachineVersion = "4.0.0"
 
 dependencies {
-    implementation(project(":services:state-machine"))
     implementation(project(":services:common"))
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("io.micrometer:micrometer-registry-prometheus")
