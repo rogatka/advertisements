@@ -1,0 +1,20 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="64b6bd1e-adc3-4c1c-b9a0-827d6753c41b" author="Ilia_Klishin">
+        <sql>
+            INSERT INTO advertisement.roles (name, created_at)
+            VALUES
+            ('USER', NOW()),
+            ('MODERATOR', NOW()),
+            ('ADMINISTRATOR', NOW());
+        </sql>
+        <rollback>
+            DELETE FROM advertisement.roles where name in ('USER', 'MODERATOR', 'ADMINISTRATOR');
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

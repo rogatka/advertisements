@@ -1,0 +1,672 @@
+{
+	"info": {
+		"_postman_id": "3381469c-93c2-4509-9865-f80c267aaa5f",
+		"name": "Advertisements",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29822253"
+	},
+	"item": [
+		{
+			"name": "1. Register internal client",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Internal-Auth",
+						"value": "22]Rb8L7z9yityA_nH6-t-pxVd8#q%",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"appName\": \"ads-client\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/internal/auth/registration",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"internal",
+						"auth",
+						"registration"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "1.Request OTP",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept-Language",
+						"value": "EN",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"phone\": \"55555\",\r\n    \"otpType\": \"AUTH\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/otp",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"otp"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2. Verify OTP",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTP response status should be 200 OK & Response body should be JSON', function () {\r",
+							"    pm.expect(pm.response.code).to.eql(200) && pm.response.to.be.json\r",
+							"})\r",
+							"\r",
+							"const jsonData = pm.response.json()\r",
+							"console.log(jsonData)\r",
+							"\r",
+							"pm.collectionVariables.set('access_token', jsonData.accessToken)\r",
+							"pm.collectionVariables.set('refresh_token', jsonData.regreshToken)"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"phone\": \"55555\",\r\n    \"code\": \"3959\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3. Update access-token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTP response status should be 200 OK & Response body should be JSON', function () {\r",
+							"    pm.expect(pm.response.code).to.eql(200) && pm.response.to.be.json\r",
+							"})\r",
+							"\r",
+							"const jsonData = pm.response.json()\r",
+							"console.log(jsonData)\r",
+							"\r",
+							"pm.collectionVariables.set('access_token', jsonData.accessToken)"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Refresh-Token",
+						"value": "{{refresh_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8081/api/v1/auth/access-token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"access-token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4. Logout",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{refresh_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/v1/auth/logout",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "1.Get cities by name",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8085/api/v1/cities?name=Ниж",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8085",
+					"path": [
+						"api",
+						"v1",
+						"cities"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "Ниж"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2.Upload image(s)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "files",
+							"type": "file",
+							"src": "/C:/Users/Ilia_Klishin/Downloads/Telegram Desktop/SGCAM_20240128_131318744.jpg"
+						},
+						{
+							"key": "files",
+							"type": "file",
+							"src": "/C:/Users/Ilia_Klishin/Downloads/Telegram Desktop/SGCAM_20240128_131241293.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8085/api/v1/files/images",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8085",
+					"path": [
+						"api",
+						"v1",
+						"files",
+						"images"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3.Create advertisement",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('HTTP response status should be 200 OK & Response body should be JSON', function () {\r",
+							"    pm.expect(pm.response.code).to.eql(200) && pm.response.to.be.json\r",
+							"})\r",
+							"\r",
+							"const jsonData = pm.response.json()\r",
+							"console.log(jsonData)\r",
+							"\r",
+							"pm.collectionVariables.set('advertisement_id', jsonData.id)"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Смартфон Samsung 16\",\r\n    \"description\": \"Продам\",\r\n    \"cityId\": \"66e2faf068c51d57561443f7\",\r\n    \"priceRu\": {\r\n        \"value\": 5000\r\n    },\r\n    \"images\": [\r\n        {\r\n            \"id\": \"66fe813648440d1138247078\",\r\n            \"order\": 1\r\n        },\r\n        {\r\n            \"id\": \"66fe813648440d1138247077\",\r\n            \"order\": 2\r\n        }\r\n    ],\r\n    \"contactInfo\": {\r\n        \"phone\": \"12345\",\r\n        \"firstName\": \"Влад\",\r\n        \"lastName\": \"Иванов\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8085/api/v1/advertisements",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8085",
+					"path": [
+						"api",
+						"v1",
+						"advertisements"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4.Change advertisement status(PUBLISH,APPROVE/REJECT, DEACTIVATE/ACTIVATE)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8085/api/v1/advertisements/{{advertisement_id}}/actions?action=APPROVE",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8085",
+					"path": [
+						"api",
+						"v1",
+						"advertisements",
+						"{{advertisement_id}}",
+						"actions"
+					],
+					"query": [
+						{
+							"key": "action",
+							"value": "APPROVE"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get image",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8085/api/v1/files/images/66e827ac1de0763263af2045",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8085",
+					"path": [
+						"api",
+						"v1",
+						"files",
+						"images",
+						"66e827ac1de0763263af2045"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update advertisement",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Смартфон Sams 77771111114444\",\r\n    \"description\": \"Продам почти новый\",\r\n    \"cityId\": \"66e2faf068c51d57561443f7\",\r\n    \"priceRu\": {\r\n        \"value\": 10000\r\n    },\r\n    \"images\": [\r\n        {\r\n            \"id\": \"66e827ac1de0763263af2046\",\r\n            \"order\": 2\r\n        },\r\n        {\r\n            \"id\": \"66e827ac1de0763263af2045\",\r\n            \"order\": 1\r\n        }\r\n    ],\r\n    \"contactPhone\": \"12345\",\r\n    \"contactFirstName\": \"Влад\",\r\n    \"contactLastName\": \"И.\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8085/api/v1/advertisements/{{advertisement_id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8085",
+					"path": [
+						"api",
+						"v1",
+						"advertisements",
+						"{{advertisement_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Pay for advertisement",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"advertisementId\": \"{{advertisement_id}}\",\r\n    \"amount\": 100\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8085/api/v1/payments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8085",
+					"path": [
+						"api",
+						"v1",
+						"payments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "increment views counter",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8085/api/v1/advertisements/{{advertisement_id}}:viewed",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8085",
+					"path": [
+						"api",
+						"v1",
+						"advertisements",
+						"{{advertisement_id}}:viewed"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get advertisements with pagination",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8085/api/v1/advertisements?q=новый&sort=publicationDate,desc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8085",
+					"path": [
+						"api",
+						"v1",
+						"advertisements"
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "новый"
+						},
+						{
+							"key": "sort",
+							"value": "publicationDate,desc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get advertisement by id",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8085/api/v1/advertisements/{{advertisement_id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8085",
+					"path": [
+						"api",
+						"v1",
+						"advertisements",
+						"{{advertisement_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get current user advertisements",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8085/api/v1/advertisements/my",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8085",
+					"path": [
+						"api",
+						"v1",
+						"advertisements",
+						"my"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "access_token",
+			"value": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjMzE1OTRjOS03Y2MyLTQ4MzUtOWUyZC1mZTc2MDdlYTQ4N2MiLCJzdWIiOiJ1c2VyIiwiZXhwIjoxNzI4MDUwMTI1LCJpYXQiOjE3MjgwNDY1MjUsIm5iZiI6MTcyODA0NjUyNX0.lJA2Vzc8TRDn-KTjYSAH6jwn7m_C3KIdsiCAuONaTbvEw3IdARToFN_Yg2dZUS4_EhFHeVp97Q7hKkbQC2pDrx4iSVtx4zsDU8P9qRadfNCEIvetCqUS6kv0CMbF8QQkbPIos2kJ7qU-onsIfaA3Mxgp_GQd_41ASCFoSVA_U912DvZl_d3B5Vs9Oohq2a3dxdonFNnq76-nLLJEkEQj6fRWzwpefJbwoXDLrIhvR2ASMrRhiATdc2HmzprVXiWjTiKfN8eL7Pp8LPtPOKNxa0blc_t5_uoq0bpb9ZNvvdtFaFV4hJpm8vsZuTTIa-IelK6kGdiT_PhIgzKoJD5dPA",
+			"type": "string"
+		},
+		{
+			"key": "refresh_token",
+			"value": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjMzE1OTRjOS03Y2MyLTQ4MzUtOWUyZC1mZTc2MDdlYTQ4N2MiLCJzdWIiOiJ1c2VyIiwiZXhwIjoxNzMwNTQyNDU4LCJpYXQiOjE3Mjc5NTA0NTgsIm5iZiI6MTcyNzk1MDQ1OH0.OvA799846nHgBkwCRJIoqL48xPUiML8GErQGH-0U5YAd8E-YjXPHLODMy5jy6TYdjTt1VdwF3atzNQWoydcDftlXXm3fF2tVas-mTuuqoSjbB9raqUSdaz_WoDzRF3nM7k46c67PNS07VVymeS_zljTttiBd03WX8KpSdAfLZA2dexqE03zwtzXz56T_n6kZg5YGNHt5eafaE9VV-BZ03ew_bvJY9pV8Hu4tv96zo6W2bopEcXoH8qkK7nhZxKcL4jUsbuy6w2KSn9M9tBlbMLVX_15HwWFmhFBX5yw1t2_7nE-uZUutqe4QNPrPzqxn2w0O6Zz6atqkCVefvfgOlw",
+			"type": "string"
+		},
+		{
+			"key": "advertisement_id",
+			"value": "66fe85f2cf73fc03be83a38c",
+			"type": "string"
+		}
+	]
+}

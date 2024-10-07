@@ -1,0 +1,31 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPath": "/api/pay",
+    "bodyPatterns": [
+      {
+        "matchesJsonPath": "$.amount"
+      },
+      {
+        "matchesJsonPath": "$.fromAccountId"
+      },
+      {
+        "matchesJsonPath": "$.toAccountId"
+      }
+    ],
+    "basicAuthCredentials": {
+      "username": "payment-service-user",
+      "password": "payment-service-password"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8"
+    },
+    "jsonBody": {
+      "success": "true",
+      "transactionId": "{{randomValue type='UUID'}}"
+    }
+  }
+}

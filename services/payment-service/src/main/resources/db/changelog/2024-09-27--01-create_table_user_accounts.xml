@@ -1,0 +1,20 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="74d25327-87ff-454e-94f1-c4f780e84d15" author="Ilia_Klishin">
+        <sql>
+            create table if not exists payment.user_accounts (
+            id UUID primary key,
+            user_id text unique not null,
+            account_id text unique not null
+            );
+        </sql>
+        <rollback>
+            drop table if exists payment.user_accounts;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

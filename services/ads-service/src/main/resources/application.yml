@@ -1,0 +1,101 @@
+server:
+  port: 8085
+spring:
+  application:
+    name: ads
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost}
+      database: ${MONGODB_DATABASE:advertisement}
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:16379}
+      password: ${REDIS_PASSWORD:abc}
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
+    listener:
+      ack-mode: record
+    producer:
+      client-id: ${spring.application.name}
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      retries: 3
+    consumer:
+      group-id: ${spring.application.name}
+      autoOffsetReset: earliest
+      keyDeserializer: org.apache.kafka.common.serialization.StringDeserializer
+      valueDeserializer: org.apache.kafka.common.serialization.StringDeserializer
+      # org.springframework.kafka.support.serializer.JsonDeserializer
+
+kafka:
+  topics:
+    advertisement-views:
+      partitions: 3
+      name: advertisement-views
+
+target: ${TEMPORAL_TARGET:127.0.0.1:7233}
+
+advertisement:
+  duration-days: 30
+  priority-days: 30
+
+caching:
+  default-ttl-minutes: 30
+  advertisements:
+    cache-name: advertisements_cache
+    ttl-minutes: 10
+  cities:
+    cache-name: cities_cache
+    ttl-minutes: 60
+
+auth-service:
+  base-url: ${AUTH_SERVICE_URL:http://localhost:8081}
+  verify-token-path: api/v1/internal/auth/verification
+  username: ${AUTH_SERVICE_USERNAME:ads-client}
+  password: ${AUTH_SERVICE_PASSWORD:3!FnX23p%2}
+  retry:
+    max-attempts: 3
+    min-backoff-seconds: 2
+
+saga-orchestrator:
+  base-url: ${SAGA_ORCHESTRATOR_URL:http://localhost:8083}
+  pay-path: api/v1/workflows/advertisement-payments
+  username: ads-client
+  password: tFxE9638'*
+  retry:
+    max-attempts: 3
+    min-backoff-seconds: 2
+
+minio:
+  url: ${MINIO_URL:http://localhost:9005}
+  access-key: advertisement
+  secret-key: advertisement-secret-key
+  bucket-name: files
+  retry:
+    max-attempts: 3
+    min-backoff-seconds: 2
+
+management:
+  metrics.distribution.percentiles-histogram.http.server.requests: true
+  endpoints.web.exposure.include: '*' # health,info,prometheus
+  tracing:
+    enabled: true
+    sampling.probability: 1.0
+#  zipkin.tracing.endpoint: http://127.0.0.1:9411/api/v2/spans
+
+tracing:
+  url: ${TRACING_URL:http://127.0.0.1:4317} #4317 - grpc, 4318 - http
+
+loki:
+  url: ${LOKI_URL:http://localhost:3100/loki/api/v1/push}
+
+logging:
+  pattern.level: '%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]'
+  console: "[${spring.application.name:}] %clr(%d{${LOG_DATEFORMAT_PATTERN:yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+  level:
+    org.springframework: INFO
+    org.springframework.security: INFO
+    org.springframework.data.mongodb.core.ReactiveMongoTemplate: DEBUG
+    com.advertisement: DEBUG
+    org.springframework.cache: TRACE

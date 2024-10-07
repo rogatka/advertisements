@@ -1,0 +1,11 @@
+version: '3'
+services:
+  mock-server:
+    restart: on-failure
+    image: wiremock/wiremock:3.9.1
+    container_name: 'mock-server'
+    entrypoint: ["/docker-entrypoint.sh", "--container-threads=100", "--no-request-journal", "--disable-request-logging", "--global-response-templating", "--max-template-cache-entries=500"]
+    volumes:
+      - ./mappings:/home/wiremock/mappings
+    ports:
+      - "8484:8080"

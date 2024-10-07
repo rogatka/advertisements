@@ -1,0 +1,31 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="72865a95-25bb-442f-94b0-4f3d8010b366" author="Ilia_Klishin">
+        <sql>
+            create table if not exists advertisement.refresh_token (
+            id UUID primary key,
+            user_id UUID not null,
+            refresh_token_hash bytea not null,
+            revoked boolean default false,
+            created_at timestamptz not null
+            );
+        </sql>
+        <rollback>
+            drop table if exists advertisement.refresh_token;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="231e2e4e-1d62-493a-97ba-573c2ccdfbc6" author="Ilia_Klishin">
+        <sql>
+            alter table advertisement.refresh_token add constraint refresh_token_user_id_fk foreign key (user_id) references advertisement.users(id);
+        </sql>
+        <rollback>
+            alter table advertisement.refresh_token drop constraint if exists refresh_token_user_id_fk;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,14 @@
+version: '3.9'
+services:
+  redis:
+    image: redis/redis:latest
+    restart: on-failure
+    ports:
+      - 16379:6379
+    volumes:
+      - redis_data:/data
+    env_file: .env
+    entrypoint: redis-server --appendonly yes  --requirepass ${REDIS_PASSWORD}
+
+volumes:
+  redis_data:

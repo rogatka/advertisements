@@ -1,0 +1,23 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="d67fac33-8e07-4739-9e64-4c283b2ac382" author="Ilia_Klishin">
+        <sql>
+            create table if not exists advertisement.app_clients (
+            id UUID primary key,
+            name varchar(50) unique not null,
+            password bytea not null,
+            disabled boolean default false,
+            created_at timestamptz not null,
+            disabled_at timestamptz
+            );
+        </sql>
+        <rollback>
+            drop table if exists advertisement.app_clients;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

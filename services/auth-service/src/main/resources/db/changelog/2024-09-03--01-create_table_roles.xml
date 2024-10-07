@@ -1,0 +1,20 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="41ea39d0-e212-427f-a40b-f321c89f0bac" author="Ilia_Klishin">
+        <sql>
+            create table if not exists advertisement.roles (
+            id bigserial primary key,
+            name varchar(100),
+            created_at timestamptz not null
+            );
+        </sql>
+        <rollback>
+            drop table if exists advertisement.roles;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

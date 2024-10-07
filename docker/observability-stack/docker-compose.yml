@@ -1,0 +1,52 @@
+version: "4"
+services:
+  tempo:
+    restart: on-failure
+    image: grafana/tempo:latest
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./docker/tempo/tempo.yaml:/etc/tempo.yaml:ro
+      - ./tempo-data:/var/tempo
+    ports:
+      - "3200:3200"   #tempo
+      - "4317:4317" #jaeger
+      - "16686:16686" #jaeger
+
+  loki:
+    restart: on-failure
+    image: grafana/loki:main
+    command: [ "-config.file=/etc/loki/local-config.yaml" ]
+    ports:
+      - "3100:3100"
+
+  prometheus:
+    restart: on-failure
+    image: prom/prometheus:v2.46.0
+    command:
+      - --enable-feature=exemplar-storage
+      - --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+
+  grafana:
+    restart: on-failure
+    image: grafana/grafana:10.1.0
+    volumes:
+      - ./docker/grafana:/etc/grafana/provisioning/datasources:ro
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+    ports:
+      - "3000:3000"
+
+# uncomment if you want to use 'jaeger' instead of Tempo for collecting logs
+#  jaeger:
+#    image: jaegertracing/all-in-one:latest
+#    ports:
+#      - 4317:4317
+#      - 16686:16686
+#    environment:
+#      - COLLECTOR_OTLP_ENABLED=true

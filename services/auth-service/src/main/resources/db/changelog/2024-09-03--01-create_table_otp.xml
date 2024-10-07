@@ -1,0 +1,22 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="643687b6-c83c-4d6f-ad4c-56fac4e8d71f" author="Ilia_Klishin">
+        <sql>
+            create table if not exists advertisement.otp (
+            id UUID primary key,
+            phone varchar(50) not null,
+            otp_hash bytea not null,
+            type text not null,
+            created_at timestamptz not null
+            );
+        </sql>
+        <rollback>
+            drop table if exists advertisement.otp;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

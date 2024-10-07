@@ -1,0 +1,39 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="ae20fdf2-8691-4ab6-8114-c9b6e7bba91a" author="Ilia_Klishin">
+        <sql>
+            create table if not exists advertisement.users_roles (
+            id UUID primary key,
+            user_id UUID not null,
+            role_id bigint not null,
+            created_at timestamptz not null
+            );
+        </sql>
+        <rollback>
+            drop table if exists advertisement.users_roles;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="b4d5719b-e4d2-4e35-bfe3-39b123d5c177" author="Ilia_Klishin">
+        <sql>
+            alter table advertisement.users_roles add constraint user_id_fk foreign key (user_id) references advertisement.users(id);
+        </sql>
+        <rollback>
+            alter table advertisement.users_roles drop constraint if exists user_id_fk;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="2fdb27ba-b687-4b48-9cae-eaf162e4d223" author="Ilia_Klishin">
+        <sql>
+            alter table advertisement.users_roles add constraint role_id_fk foreign key (role_id) references advertisement.roles(id);
+        </sql>
+        <rollback>
+            alter table advertisement.users_roles drop constraint if exists role_id_fk;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

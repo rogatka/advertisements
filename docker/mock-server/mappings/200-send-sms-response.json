@@ -1,0 +1,28 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPath": "/api/sms",
+    "headers": {
+      "Authorization": {
+        "equalTo": "Bearer sms-service-access-token"
+      }
+    },
+    "bodyPatterns": [
+      {
+        "matchesJsonPath": "$[?(@.phone =~ /[0-9]{5,20}/)]"
+      },
+      {
+        "matchesJsonPath": "$.message"
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "success": true
+    }
+  }
+}
