@@ -26,7 +26,7 @@ private val logger = KotlinLogging.logger {}
 
 @Configuration
 @EnableTransactionManagement
-@EnableReactiveMongoRepositories(basePackages = ["com.advertisement.ads.repository", "com.advertisement.statemachine.repository"])
+@EnableReactiveMongoRepositories(basePackages = ["com.advertisement.ads.repository"])
 class MongoConfiguration(
     val mongoProperties: MongoProperties
 ) : AbstractReactiveMongoConfiguration() {

@@ -159,6 +159,7 @@ Technologies used:
 - Spring Boot 3.x, WebFlux
 - Spring Data R2DBC, JOOQ
 - MongoDB, PostgreSQL
+- DB migration tools - Mongock, Liquibase
 - Redis for cache
 - Kafka for metric's counter
 - SAGA-orchestrator with temporal.io to manage distributed transaction for the case: 

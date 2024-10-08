@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import reactor.core.publisher.Hooks
 
-@SpringBootApplication(scanBasePackages = ["com.advertisement.ads", "com.advertisement.statemachine"])
+@SpringBootApplication(scanBasePackages = ["com.advertisement.ads"])
 @ConfigurationPropertiesScan
 class AdsApplication
 
