@@ -1,11 +1,11 @@
 package com.advertisement.auth.service
 
-import com.advertisement.auth.dto.request.InternalRegistrationRequest
 import com.advertisement.auth.dto.request.LoginRequest
 import com.advertisement.auth.dto.response.AccessTokenResponse
-import com.advertisement.auth.dto.response.InternalRegistrationResponse
 import com.advertisement.auth.dto.response.LoginResponse
-import com.advertisement.auth.model.UserWithRoles
+import com.advertisement.grpc.InternalRegistrationRequest
+import com.advertisement.grpc.InternalRegistrationResponse
+import com.advertisement.grpc.UserWithRoles
 import reactor.core.publisher.Mono
 
 interface AuthService {

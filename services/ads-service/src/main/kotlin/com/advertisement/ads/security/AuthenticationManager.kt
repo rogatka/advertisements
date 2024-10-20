@@ -2,7 +2,7 @@ package com.advertisement.ads.security
 
 import com.advertisement.ads.dto.UserInfo
 import com.advertisement.ads.exception.ApiUnauthorizedException
-import com.advertisement.ads.service.AuthService
+import com.advertisement.ads.service.grpc.AuthServiceClient
 import mu.KotlinLogging
 import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -15,7 +15,7 @@ private val logger = KotlinLogging.logger {}
 
 @Component
 class AuthenticationManager(
-    val authService: AuthService,
+    val authServiceClient: AuthServiceClient,
 ) : ReactiveAuthenticationManager {
 
     override fun authenticate(authentication: Authentication): Mono<Authentication> {
@@ -25,7 +25,7 @@ class AuthenticationManager(
                     Mono.just(auth)
                         .switchIfEmpty(Mono.error(ApiUnauthorizedException("Unauthorized")))
                         .map { auth.credentials.toString() }
-                        .flatMap { token -> authService.verifyAndGetUser(token) }
+                        .flatMap { token -> authServiceClient.verifyAndGetUser(token) }
                         .onErrorResume { e ->
                             logger.error("Error: ${e.message}")
                             Mono.error(ApiUnauthorizedException("${e.message}"))

@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package com.advertisement.grpc;
+
+option java_package = "com.advertisement.grpc";
+option java_multiple_files = true;
+
+message VerificationRequest{
+    string token = 1;
+}
+
+message InternalRegistrationRequest{
+    string authHeader = 1;
+    string appName = 2;
+}
+
+message UserWithRoles{
+    string id = 1;
+    string phone = 2;
+    string firstName = 3;
+    string lastName = 4;
+    google.protobuf.Timestamp createdAt = 5;
+    repeated string roles = 6;
+}
+
+message InternalRegistrationResponse {
+    string username = 1;
+    string password = 2;
+}
+
+service InternalAuthService{
+    rpc register(InternalRegistrationRequest) returns (InternalRegistrationResponse);
+    rpc verify(VerificationRequest) returns (UserWithRoles);
+}

@@ -1,32 +1,19 @@
 package com.advertisement.auth.controller
 
-import com.advertisement.auth.dto.request.InternalRegistrationRequest
-import com.advertisement.auth.dto.response.InternalRegistrationResponse
-import com.advertisement.auth.dto.request.UserVerificationRequest
-import com.advertisement.auth.model.UserWithRoles
 import com.advertisement.auth.service.AuthService
-import jakarta.validation.Valid
-import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import com.advertisement.grpc.ReactorInternalAuthServiceGrpc
+import com.advertisement.grpc.VerificationRequest
+import org.lognet.springboot.grpc.GRpcService
 import reactor.core.publisher.Mono
 
-@RestController
-@RequestMapping("/api/v1/internal/auth")
-class InternalAuthController(val authService: AuthService) {
+@GRpcService
+class InternalAuthController(val authService: AuthService): ReactorInternalAuthServiceGrpc.InternalAuthServiceImplBase() {
 
-    //TODO change to GRPC
-    @PostMapping("/registration")
-    fun register(@Valid @RequestBody internalRegistrationRequest: InternalRegistrationRequest,
-                 @Valid @RequestHeader(name = "X-Internal-Auth") internalAuthHeader: String)
-    : Mono<ResponseEntity<InternalRegistrationResponse>> {
-        return authService.register(internalRegistrationRequest, internalAuthHeader)
-            .map { r -> ResponseEntity.ok(r) }
+    override fun register(request: com.advertisement.grpc.InternalRegistrationRequest?): Mono<com.advertisement.grpc.InternalRegistrationResponse> {
+        return authService.register(request!!, request.authHeader)
     }
 
-    @PostMapping("/verification")
-    fun verify(@Valid @RequestBody userVerificationRequest: UserVerificationRequest)
-    : Mono<ResponseEntity<UserWithRoles>> {
-        return authService.verify(userVerificationRequest.token)
-            .map { r -> ResponseEntity.ok(r) }
+    override fun verify(request: VerificationRequest?): Mono<com.advertisement.grpc.UserWithRoles> {
+        return authService.verify(request!!.token)
     }
 }

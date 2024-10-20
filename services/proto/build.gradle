@@ -1,0 +1,58 @@
+buildscript {
+    ext {
+        protobufVersion = '3.22.3'
+        protobufPluginVersion = '0.8.14'
+        grpcVersion = '1.58.0'
+        reactiveGrpcVersion = '1.2.4'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'com.google.protobuf' version "${protobufPluginVersion}"
+}
+sourceCompatibility = '17'
+repositories {
+    mavenCentral()
+}
+dependencies {
+    // GRPC
+    implementation "io.grpc:grpc-protobuf:${grpcVersion}"
+    implementation "io.grpc:grpc-stub:${grpcVersion}"
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation "com.salesforce.servicelibs:reactor-grpc-stub:${reactiveGrpcVersion}"
+    compileOnly 'jakarta.annotation:jakarta.annotation-api:1.3.5'        // Java 9+ compatibility - Do NOT update to 2.0.0
+}
+def generatedFilesBaseDir = "${buildDir}/generated/source/proto"
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:${protobufVersion}"
+    }
+    clean {
+        delete generatedFilesBaseDir
+    }
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+        }
+        reactor {
+            artifact = "com.salesforce.servicelibs:reactor-grpc:${reactiveGrpcVersion}"
+        }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+            reactor {}
+        }
+    }
+}
+// Inform IDEs like IntelliJ IDEA, Eclipse or NetBeans about the generated code.
+sourceSets {
+    main {
+        java {
+            srcDir "${generatedFilesBaseDir}/main/java"
+            srcDir "${generatedFilesBaseDir}/main/reactor"
+        }
+    }
+}
+

@@ -107,7 +107,7 @@ Rel(temporal_api, ads_service, "Потребляет", "grpc")
 
 Lay_D(kafka, pay_service_api)
 
-Rel(ads_service, auth_service, "Валидация токена", "HTTP")
+Rel(ads_service, auth_service, "Валидация токена", "GRPC")
 
 'Rel(ads_service, loki, "Логгирование", "HTTP")
 'Rel(ads_service, prometheus, "Метрики", "HTTP")
@@ -176,21 +176,14 @@ Technologies used:
 - add Postman collection
 - should take into account priority when sorting advertisements
 - dependencies versions as variables
-- GRPC instead of REST between microservices 
+- GRPC instead of REST between microservices (partially done)
 - use message broker instead of direct call of saga-orchestrator
 - add scheduler to reset ads' priority when it's expired
 
 
 ## API Usage
-1. Register internal client in auth-service (so ads-service could make requests to auth-service to validate token):
-```
-curl --location 'http://localhost:8081/api/v1/internal/auth/registration' \
---header 'X-Internal-Auth: 22]Rb8L7z9yityA_nH6-t-pxVd8#q%' \
---header 'Content-Type: application/json' \
---data '{
-    "appName": "ads-client"
-}'
-```
+1. Register internal client in auth-service (so ads-service could make requests to auth-service to validate token).
+You can use BloomRPC to make a call to API using internal_auth.proto from the '/services/proto' directory.
 In response you will get credentials for newly created client:
 ```
 {

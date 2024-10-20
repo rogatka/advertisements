@@ -2,15 +2,14 @@ package com.advertisement.auth.service
 
 import com.advertisement.auth.configuration.SecurityProperties
 import com.advertisement.auth.dto.OtpType
-import com.advertisement.auth.dto.request.InternalRegistrationRequest
 import com.advertisement.auth.dto.request.LoginRequest
 import com.advertisement.auth.dto.response.AccessTokenResponse
 import com.advertisement.auth.dto.response.AppClientResponse
-import com.advertisement.auth.dto.response.InternalRegistrationResponse
 import com.advertisement.auth.dto.response.LoginResponse
 import com.advertisement.auth.exception.*
 import com.advertisement.auth.model.*
 import com.advertisement.auth.utils.Utils
+import com.advertisement.grpc.InternalRegistrationResponse
 import mu.KotlinLogging
 import org.springframework.security.core.context.ReactiveSecurityContextHolder
 import org.springframework.stereotype.Service
@@ -35,7 +34,10 @@ class AuthServiceImpl(
 ) : AuthService {
 
     @Transactional
-    override fun register(internalRegistrationRequest: InternalRegistrationRequest, internalAuthHeader: String):Mono<InternalRegistrationResponse> {
+    override fun register(
+        internalRegistrationRequest: com.advertisement.grpc.InternalRegistrationRequest,
+        internalAuthHeader: String
+    ): Mono<com.advertisement.grpc.InternalRegistrationResponse> {
         if (securityProperties.internalAuth.registrationKey != internalAuthHeader) throw ApiForbiddenException("Invalid key")
         val appName = internalRegistrationRequest.appName
         return appClientService.findByName(appName)
@@ -47,10 +49,10 @@ class AuthServiceImpl(
                 }
             }
             .switchIfEmpty(appClientService.save(appName))
-            .map { e -> InternalRegistrationResponse(e.name, e.password!!) }
+            .map { e -> InternalRegistrationResponse.newBuilder().setUsername(e.name).setPassword(e.password!!).build() }
     }
 
-    override fun verify(token: String): Mono<UserWithRoles> {
+    override fun verify(token: String): Mono<com.advertisement.grpc.UserWithRoles> {
         return Mono.just(token)
             .flatMap { t -> tokenService.verifyToken(t, TokenType.ACCESS) }
             .onErrorResume { e ->
@@ -58,6 +60,16 @@ class AuthServiceImpl(
                 Mono.error(ApiUnauthorizedException("Invalid token ${e.message}"))
             }
             .flatMap { decodedJWT -> userService.findWithRolesById(decodedJWT.claims["userId"]!!.`as`(UUID::class.java)) }
+            .map { u -> com.advertisement.grpc.UserWithRoles.newBuilder()
+                .setId(u.id.toString())
+                .setPhone(u.phone)
+                .setFirstName(u.firstName.orEmpty())
+                .setLastName(u.lastName.orEmpty())
+                .setCreatedAt(com.google.protobuf.Timestamp.newBuilder()
+                    .setSeconds(u.createdAt.epochSecond)
+                    .setNanos(u.createdAt.nano))
+                .addAllRoles(u.roles)
+                .build()}
             .switchIfEmpty(Mono.error(ApiException("User not found")))
     }
 

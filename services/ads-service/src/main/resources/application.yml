@@ -50,8 +50,7 @@ caching:
     ttl-minutes: 60
 
 auth-service:
-  base-url: ${AUTH_SERVICE_URL:http://localhost:8081}
-  verify-token-path: api/v1/internal/auth/verification
+  base-url: ${AUTH_SERVICE_URL:localhost:9081}
   username: ${AUTH_SERVICE_USERNAME:ads-client}
   password: ${AUTH_SERVICE_PASSWORD:3!FnX23p%2}
   retry:

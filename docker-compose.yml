@@ -58,6 +58,7 @@ services:
       TRACING_URL: http://host.docker.internal:4317
     ports:
       - 8081:8081
+      - 9081:9081
     links:
       - postgres-local
   ads-service:
@@ -75,7 +76,7 @@ services:
       MONGODB_DATABASE: advertisement
       KAFKA_BOOTSTRAP_SERVERS: host.docker.internal:29092
       TEMPORAL_TARGET: host.docker.internal:7233
-      AUTH_SERVICE_URL: http://auth-service:8081
+      AUTH_SERVICE_URL: auth-service:9081
       AUTH_SERVICE_USERNAME: ads-client
       AUTH_SERVICE_PASSWORD: 3!FnX23p%2
       SAGA_ORCHESTRATOR_URL: http://saga-orchestrator:8083

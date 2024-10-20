@@ -21,7 +21,6 @@ class SecurityConfiguration(
         val PERMITTED_URL: Array<String> = arrayOf(
             "/api/v1/otp",
             "/api/v1/auth/access-token",
-            "/api/v1/internal/auth/registration",
             "/api/v1/auth/login",
             "/v3/api-docs",
             "/actuator/**"
